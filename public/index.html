@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loja da Bruxa</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/animations.css">
+  <link rel="stylesheet" href="styles/cart.css">
+  <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.3/babel.min.js"></script>
+</head>
+<body>
+
+ 
+  <header>
+    <div class="logo">🔮 Loja da Bruxa</div>
+    <nav>
+      <a href="#inicio">Início</a>
+      <a href="#historia">História</a>
+      <a href="#elixires">Elixires</a>
+      <a href="#carrinho">Carrinho</a>
+      <a href="#contato">Contato</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section id="inicio">
+    <div class="hero-content">
+      <span class="hero-ornamento">✦ &nbsp; elixires · encantamentos · mistérios &nbsp; ✦</span>
+      <h1 class="hero-titulo">Loja da Bruxa</h1>
+      <div class="hero-linha">
+        <span></span>
+        <em>desde 1867</em>
+        <span></span>
+      </div>
+      <p class="hero-descricao">
+        Em 1867, a bruxa Seraphina Blackthorn abriu as portas de sua loja em um beco
+        esquecido pelo tempo. Desde então, ela destila poções raras com ingredientes
+        colhidos sob a luz da lua e encanta aventureiros que buscam o extraordinário.
+        Cada frasco carrega um segredo, cada elixir uma história.
+      </p>
+      <button class="btn-hero" onclick="document.getElementById('elixires').scrollIntoView({behavior:'smooth'})">
+        Explorar Elixires ✨
+      </button>
+    </div>
+  </section>
+
+  <div class="divisoria"></div>
+
+  <!-- HISTÓRIA -->
+  <section id="historia">
+    <h2>Nossa História</h2>
+    <p class="texto-historia">
+      Fundada em 1867 pela bruxa Seraphina Blackthorn, a loja atravessou gerações guardando
+      receitas secretas e ingredientes raros. Cada elixir é preparado sob a lua cheia, com
+      ervas colhidas à meia-noite e frascos selados com cera de vela negra.
+    </p>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <div class="timeline-card">
+          <span class="timeline-emoji">🌙</span>
+          <h3>Laboratório Secreto</h3>
+          <span class="timeline-ano">1867</span>
+          <p>Os primeiros encantamentos foram criados aqui. Seraphina destilava poções à luz de velas enquanto o mundo dormia.</p>
+        </div>
+        <div class="timeline-linha">
+          <div class="timeline-bolinha"></div>
+        </div>
+        <div class="timeline-vazio"></div>
+      </div>
+
+      <div class="timeline-item invertido">
+        <div class="timeline-vazio"></div>
+        <div class="timeline-linha">
+          <div class="timeline-bolinha"></div>
+        </div>
+        <div class="timeline-card">
+          <span class="timeline-emoji">🔮</span>
+          <h3>Abertura ao Público</h3>
+          <span class="timeline-ano">1920</span>
+          <p>A loja abriu suas portas para aventureiros e curiosos. A fama de Seraphina se espalhou pelo mundo encantado.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-card">
+          <span class="timeline-emoji">🧙‍♀️</span>
+          <h3>Seraphina Hoje</h3>
+          <span class="timeline-ano">Hoje</span>
+          <p>A tradição continua. Cada elixir ainda é feito à mão, com amor, magia e ingredientes colhidos sob a lua cheia.</p>
+        </div>
+        <div class="timeline-linha">
+          <div class="timeline-bolinha"></div>
+        </div>
+        <div class="timeline-vazio"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divisoria"></div>
+
+  <!-- ELIXIRES -->
+  <section id="elixires">
+    <h2>Nossos Elixires</h2>
+    <div id="root-react"></div>
+  </section>
+
+  <div class="divisoria"></div>
+
+  <!-- CARRINHO -->
+  <section id="carrinho">
+    <h2>🛒 Meu Carrinho</h2>
+    <div id="root-carrinho"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="contato">
+    <h3>🔮 Loja da Bruxa</h3>
+    <p>📍 Beco das Sombras, 13 — Vila Encantada</p>
+    <p>✉ seraphina@lojadabruxa.com</p>
+    <p>📞 (11) 9999-1313</p>
+    <p class="copy">© 2026 Loja da Bruxa. Todos os direitos reservados.</p>
+  </footer>
+
+  <script type="text/babel">
+
+    window.__adicionarAoCarrinho = null;
+    window.__atualizarCarrinhoExterno = null;
+
+    // ── CardElixir ──────────────────────────────────────────────
+    function CardElixir({ elixir, onAdicionar }) {
+      return (
+        <div className="card-elixir">
+          <div className="card-imagem">
+            <img src={elixir.imagem} alt={elixir.titulo} />
+            <div className="card-overlay"></div>
+          </div>
+          <div className="info">
+            <h3>{elixir.titulo}</h3>
+            <p>{elixir.descricao}</p>
+            <div className="card-rodape">
+              <span className="valor-badge">{elixir.valor} moedas</span>
+              <button className="btn-comprar" onClick={() => onAdicionar(elixir)}>
+                🛒 Comprar
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ── ListaElixires ────────────────────────────────────────────
+    function ListaElixires({ onAdicionar }) {
+      const [elixires, setElixires] = React.useState([]);
+      const [carregando, setCarregando] = React.useState(true);
+      const [erro, setErro] = React.useState(false);
+
+      React.useEffect(() => {
+        fetch('/api/elixirs')
+          .then(res => {
+            if (!res.ok) throw new Error('Erro HTTP ' + res.status);
+            return res.json();
+          })
+          .then(data => {
+            setElixires(data);
+            setCarregando(false);
+          })
+          .catch(err => {
+            console.error('Erro ao buscar elixires:', err);
+            setErro(true);
+            setCarregando(false);
+          });
+      }, []);
+
+      if (carregando) return <p style={{color: '#c9b8e8', fontStyle: 'italic'}}>Carregando elixires... 🔮</p>;
+      if (erro) return <p style={{color: '#e056a0'}}>Não foi possível carregar os elixires. Verifique se o servidor está rodando.</p>;
+
+      return (
+        <div className="grid-elixires">
+          {elixires.map(elixir => (
+            <CardElixir
+              key={elixir.id}
+              elixir={elixir}
+              onAdicionar={onAdicionar}
+            />
+          ))}
+        </div>
+      );
+    }
+
+    // ── ItemCarrinho ─────────────────────────────────────────────
+    function ItemCarrinho({ item, onRemover }) {
+      return (
+        <div className="item-carrinho">
+          <div>
+            <span className="nome">{item.titulo}</span>
+            <span className="qtd"> x{item.quantidade}</span>
+          </div>
+          <div>
+            <span className="subtotal">{item.valor * item.quantidade} moedas&nbsp;&nbsp;</span>
+            <button className="btn-remover" onClick={() => onRemover(item.id)}>
+              Remover
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    // ── Carrinho ─────────────────────────────────────────────────
+    function Carrinho({ itens, onRemover }) {
+      const total = itens.reduce((acc, item) => acc + item.valor * item.quantidade, 0);
+
+      if (itens.length === 0) {
+        return (
+          <p className="carrinho-vazio">
+            Seu carrinho está vazio... adicione um elixir! 🌙
+          </p>
+        );
+      }
+
+      return (
+        <div className="carrinho-container">
+          {itens.map(item => (
+            <ItemCarrinho key={item.id} item={item} onRemover={onRemover} />
+          ))}
+          <p className="carrinho-total">Total: {total} moedas</p>
+          <button
+            className="btn-finalizar"
+            onClick={() => alert('Compra finalizada! ✨ Seus elixires chegam em breve.')}
+          >
+            Finalizar Compra ✨
+          </button>
+        </div>
+      );
+    }
+
+    // ── App (monta em #root-react) ───────────────────────────────
+    function App() {
+      const [carrinho, setCarrinho] = React.useState([]);
+
+      React.useEffect(() => {
+        window.__adicionarAoCarrinho = (elixir) => {
+          setCarrinho(prev => {
+            const existe = prev.find(i => i.id === elixir.id);
+            const novo = existe
+              ? prev.map(i => i.id === elixir.id ? { ...i, quantidade: i.quantidade + 1 } : i)
+              : [...prev, { ...elixir, quantidade: 1 }];
+            if (window.__atualizarCarrinhoExterno) window.__atualizarCarrinhoExterno(novo);
+            return novo;
+          });
+        };
+      }, []);
+
+      function adicionar(elixir) {
+        setCarrinho(prev => {
+          const existe = prev.find(i => i.id === elixir.id);
+          const novo = existe
+            ? prev.map(i => i.id === elixir.id ? { ...i, quantidade: i.quantidade + 1 } : i)
+            : [...prev, { ...elixir, quantidade: 1 }];
+          if (window.__atualizarCarrinhoExterno) window.__atualizarCarrinhoExterno(novo);
+          return novo;
+        });
+      }
+
+      return <ListaElixires onAdicionar={adicionar} />;
+    }
+
+    // ── AppCarrinho (monta em #root-carrinho) ────────────────────
+    function AppCarrinho() {
+      const [carrinho, setCarrinho] = React.useState([]);
+
+      React.useEffect(() => {
+        window.__atualizarCarrinhoExterno = (novoCarrinho) => {
+          setCarrinho([...novoCarrinho]);
+        };
+        return () => { window.__atualizarCarrinhoExterno = null; };
+      }, []);
+
+      function remover(id) {
+        setCarrinho(prev => prev.filter(i => i.id !== id));
+      }
+
+      return <Carrinho itens={carrinho} onRemover={remover} />;
+    }
+
+    // ── Montagem ─────────────────────────────────────────────────
+    const rootElixires = ReactDOM.createRoot(document.getElementById('root-react'));
+    const rootCarrinho = ReactDOM.createRoot(document.getElementById('root-carrinho'));
+    rootElixires.render(<App />);
+    rootCarrinho.render(<AppCarrinho />);
+
+  </script>
+
+</body>
+</html>

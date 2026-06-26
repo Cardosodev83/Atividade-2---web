@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin — Loja da Bruxa</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/cart.css">
+  <style>
+    .admin-container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+    .admin-section { background: var(--bg-secao); border: 1px solid var(--borda); border-radius: 10px; padding: 30px; margin-bottom: 30px; }
+    .admin-section h2 { color: var(--lilas); font-size: 1.4rem; margin-bottom: 20px; border-bottom: 1px solid var(--borda); padding-bottom: 10px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; color: var(--texto-suave); font-size: 0.9rem; margin-bottom: 6px; }
+    .form-group input, .form-group textarea { width: 100%; background: var(--bg-card); border: 1px solid var(--borda); border-radius: 6px; color: var(--texto); font-family: Georgia, serif; font-size: 0.95rem; padding: 10px 14px; }
+    .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--roxo-claro); }
+    .form-group textarea { resize: vertical; min-height: 90px; }
+    .btn-admin { background: var(--roxo-medio); color: white; border: none; border-radius: 6px; padding: 10px 24px; font-family: Georgia, serif; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+    .btn-admin:hover { background: var(--roxo-claro); }
+    .admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .admin-table th { color: var(--lilas); text-align: left; border-bottom: 1px solid var(--borda); padding: 10px 12px; }
+    .admin-table td { border-bottom: 1px solid rgba(154,89,182,0.15); padding: 10px 12px; color: var(--texto); }
+    .admin-table .valor-col { color: var(--rosa); }
+    .vazio-msg { color: var(--texto-suave); font-style: italic; text-align: center; padding: 20px 0; }
+    #msg { display: none; border-radius: 6px; padding: 12px 18px; margin-bottom: 16px; font-size: 0.95rem; }
+    #msg.sucesso { display: block; background: rgba(80,200,80,0.15); border: 1px solid #50c850; color: #a8f0a0; }
+    #msg.erro { display: block; background: rgba(220,60,60,0.15); border: 1px solid #dc3c3c; color: #f0a0a0; }
+    .btn-remover { background: transparent; color: var(--rosa); border: 1px solid var(--rosa); border-radius: 4px; padding: 4px 12px; cursor: pointer; font-family: Georgia, serif; transition: background 0.2s, color 0.2s; }
+    .btn-remover:hover { background: var(--rosa); color: white; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="logo" href="/">🧙 Loja da Bruxa</a>
+    <nav><a href="/">← Voltar ao site</a></nav>
+  </header>
+
+  <main class="admin-container">
+    <h1 style="color: var(--lilas); font-size: 1.8rem; margin-bottom: 30px; text-align: center;">
+      Painel de Administração — Loja da Bruxa
+    </h1>
+
+    <div id="msg" role="alert"></div>
+
+    <section class="admin-section">
+      <h2>✨ Cadastrar Novo Elixir</h2>
+      <form id="form-elixir" novalidate>
+        <div class="form-group">
+          <label for="titulo">Título</label>
+          <input type="text" id="titulo" placeholder="Nome do elixir" required>
+        </div>
+        <div class="form-group">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" placeholder="Descreva o elixir mágico..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="imagem">URL da Imagem</label>
+          <input type="text" id="imagem" placeholder="https://exemplo.com/imagem.jpg">
+        </div>
+        <div class="form-group">
+          <label for="valor">Valor em moedas</label>
+          <input type="number" id="valor" min="0" placeholder="0" required>
+        </div>
+        <button type="submit" class="btn-admin">Cadastrar Elixir</button>
+      </form>
+    </section>
+
+    <section class="admin-section">
+      <h2>🧪 Elixires Cadastrados</h2>
+      <div id="tabela-wrapper"><p class="vazio-msg">Carregando elixires...</p></div>
+    </section>
+  </main>
+
+  <script>
+    async function carregarElixires() {
+      const wrapper = document.getElementById('tabela-wrapper');
+      const res = await fetch('/api/elixirs');
+      const elixires = await res.json();
+
+      if (!elixires.length) {
+        wrapper.innerHTML = '<p class="vazio-msg">Nenhum elixir cadastrado.</p>';
+        return;
+      }
+
+      const linhas = elixires.map(e => `
+        <tr>
+          <td>${e.titulo}</td>
+          <td class="valor-col">🪙 ${e.valor}</td>
+          <td>${(e.descricao || '').substring(0, 60)}...</td>
+          <td><button class="btn-remover" onclick="removerElixir(${e.id})">Remover</button></td>
+        </tr>
+      `).join('');
+
+      wrapper.innerHTML = `
+        <table class="admin-table">
+          <thead><tr><th>Título</th><th>Valor</th><th>Descrição</th><th>Ação</th></tr></thead>
+          <tbody>${linhas}</tbody>
+        </table>`;
+    }
+
+    async function cadastrarElixir(e) {
+      e.preventDefault();
+      const dados = {
+        titulo: document.getElementById('titulo').value,
+        descricao: document.getElementById('descricao').value,
+        imagem: document.getElementById('imagem').value,
+        valor: parseFloat(document.getElementById('valor').value)
+      };
+      const res = await fetch('/api/elixirs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+      if (res.ok) {
+        mostrarMsg('✅ Elixir cadastrado!', true);
+        document.getElementById('form-elixir').reset();
+        carregarElixires();
+      } else {
+        mostrarMsg('❌ Erro ao cadastrar.', false);
+      }
+    }
+
+    async function removerElixir(id) {
+      await fetch('/api/elixirs/' + id, { method: 'DELETE' });
+      mostrarMsg('✅ Elixir removido!', true);
+      carregarElixires();
+    }
+
+    function mostrarMsg(texto, sucesso) {
+      const div = document.getElementById('msg');
+      div.textContent = texto;
+      div.className = sucesso ? 'sucesso' : 'erro';
+      setTimeout(() => { div.className = ''; div.style.display = 'none'; }, 3000);
+    }
+
+    document.getElementById('form-elixir').addEventListener('submit', cadastrarElixir);
+    carregarElixires();
+  </script>
+
+</body>
+</html>

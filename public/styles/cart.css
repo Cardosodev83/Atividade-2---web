@@ -1,0 +1,20 @@
+
+.carrinho-badge {
+  background: var(--rosa);
+  color: white;
+  border-radius: 50%;
+  padding: 2px 7px;
+  font-size: 0.75rem;
+  margin-left: 6px;
+}
+
+.msg-adicionado {
+  color: #a8f0a0;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  display: none;
+}
+
+.msg-adicionado.visivel {
+  display: block;
+}
